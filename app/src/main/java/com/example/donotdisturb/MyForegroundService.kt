@@ -1,13 +1,19 @@
 package com.example.donotdisturb
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
@@ -24,6 +30,7 @@ class MyForegroundService : Service() {
         return null
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (listener != null) {
             listener!!.remove()
@@ -35,6 +42,7 @@ class MyForegroundService : Service() {
         return START_REDELIVER_INTENT
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun startListening() {
         FirebaseApp.initializeApp(this)
         FirebaseApp.getInstance()
@@ -64,17 +72,33 @@ class MyForegroundService : Service() {
                     Log.d("MyDNDService ", value.toString())
                     val status = value?.data?.get("status")
                     if (status != null) {
-                        stopForeground(true)
-                        startForeground(101, getNotification(status.toString()))
+                       // stopForeground(true)
+                        startForeground(1, getNotification(status.toString()))
                     }
                 }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getNotification(status: String): Notification {
-        return NotificationCompat.Builder(this, "donotdisturb")
+        val channel = NotificationChannel(
+            "MyChannelId",
+            "DND",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+
+        val manager = (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+        manager.createNotificationChannel(channel)
+
+        val notificationBuilder = NotificationCompat.Builder(
+            this, "MyChannelId"
+        )
+
+        return notificationBuilder
+            .setSmallIcon(IconCompat.createWithResource(this, R.drawable.ic_launcher_foreground))
             .setContentTitle("STATUS : $status")
-            .setPriority(Notification.PRIORITY_HIGH)
+            .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+            .setChannelId("MyChannelId")
             .build()
     }
 

@@ -15,7 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:hint="Enter userId of observer here!"
-        android:imeOptions="actionDone"/>
+        android:singleLine="true"
+        android:imeOptions="actionSearch" />
 
     <TextView
         android:id="@+id/tv_userId"

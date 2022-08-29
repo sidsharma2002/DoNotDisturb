@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        
+
         setupViews()
         setupUserId()
         setOnClickListener()
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setTextWatchListener() {
         etObserver.setOnEditorActionListener { textView, i, keyEvent ->
-            if (i == EditorInfo.IME_ACTION_DONE) {
+            if (i == EditorInfo.IME_ACTION_SEARCH) {
                 addObserverAndStartListening(textView.text.toString())
                 return@setOnEditorActionListener true
             }
@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun addObserverAndStartListening(id: String) {
         try {
-            setObserverId(java.lang.Long.parseLong(id)) // TODO : toLong() was not found
+            setObserverId(id.toLong())
+            startService(Intent(this, MyForegroundService::class.java))
         } catch (e: NumberFormatException) {
             Toast.makeText(this, "some error occurred", Toast.LENGTH_SHORT).show()
         }
