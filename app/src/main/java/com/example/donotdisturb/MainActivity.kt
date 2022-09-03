@@ -33,8 +33,49 @@ class MainActivity : AppCompatActivity() {
 
         setupViews()
         setupUserId()
+        getCurrentStatus()
         setOnClickListener()
         setTextWatchListener()
+        startNotifService()
+    }
+
+
+    private fun getCurrentStatus() {
+        FirebaseApp.initializeApp(this@MainActivity)
+        FirebaseApp.getInstance()
+
+        scope.launch(Dispatchers.IO) {
+            val fireStore = Firebase.firestore
+            fireStore.collection("users")
+                .document(userId.toString())
+                .get()
+                .addOnSuccessListener {
+                    Log.d("MainAct", "success")
+                    val status = it.get("status")
+                    if (status is String) {
+                        if (status == "BUSY") {
+                            btnStatus.text = Keys.SET_TO_AVAIL
+                        } else {
+                            btnStatus.text = Keys.SET_TO_BUSY
+                        }
+                    } else if (status == null) {
+                        btnStatus.text = Keys.SET_TO_BUSY
+                        setUserIdToFirestore(userId!!, "AVAIL")
+                    }
+
+                }.addOnFailureListener {
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, it.localizedMessage, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+        }
+
+        val sharedPreferences =
+            this.getSharedPreferences("DoNotDisturb", Context.MODE_PRIVATE)
+        val observerId = sharedPreferences.getLong("observerId", -1)
+        if (observerId == -1L) return
+        etObserver.hint = "current observerId : $observerId"
     }
 
     private fun setTextWatchListener() {
@@ -65,10 +106,10 @@ class MainActivity : AppCompatActivity() {
 
             if (btnStatus.text != Keys.SET_TO_BUSY) {
                 btnStatus.text = Keys.SET_TO_BUSY
-                setUserIdToFirestore(userId!!, "BUSY")
+                setUserIdToFirestore(userId!!, "AVAIL")
             } else {
                 btnStatus.text = Keys.SET_TO_AVAIL
-                setUserIdToFirestore(userId!!, "AVAIL")
+                setUserIdToFirestore(userId!!, "BUSY")
             }
         }
     }
@@ -123,6 +164,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun startNotifService() {
+        startService(Intent(this, MyForegroundService::class.java))
+    }
 
     override fun onDestroy() {
         super.onDestroy()
