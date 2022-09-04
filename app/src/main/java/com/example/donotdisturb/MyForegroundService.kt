@@ -55,7 +55,7 @@ class MyForegroundService : Service() {
             val observerId = sharedPreferences.getLong("observerId", -1)
             if (observerId == -1L) return@launch
 
-            fireStore.collection("users")
+            listener = fireStore.collection("users")
                 .document(observerId.toString())
                 .addSnapshotListener { value, error ->
 
@@ -72,15 +72,21 @@ class MyForegroundService : Service() {
                     Log.d("MyDNDService ", value.toString())
                     val status = value?.data?.get("status")
                     if (status != null) {
-                       // stopForeground(true)
-                        startForeground(1, getNotification(status.toString()))
+                        stopForeground(true)
+                        startForeground(1, getNotification(status.toString(), observerId.toString()))
+                    } else {
+                        Toast.makeText(
+                            this@MyForegroundService,
+                            "Observer not found",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getNotification(status: String): Notification {
+    private fun getNotification(status: String, observerId : String): Notification {
         val channel = NotificationChannel(
             "MyChannelId",
             "DND",
@@ -96,7 +102,7 @@ class MyForegroundService : Service() {
 
         return notificationBuilder
             .setSmallIcon(IconCompat.createWithResource(this, R.drawable.ic_launcher_foreground))
-            .setContentTitle("STATUS : $status")
+            .setContentTitle("STATUS ($observerId) : $status ")
             .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
             .setChannelId("MyChannelId")
             .build()
