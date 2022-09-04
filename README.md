@@ -3,7 +3,7 @@
 An App to notify your family members about your status i.e busy or available. 
 This comes handy when you are working from home and you don't want your friends/parent to disturb!!
 
-### ontributions Welcomed.
+### Contributions Welcomed.
 
 ### DoNotDisturb: Privacy policy
 
