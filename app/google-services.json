@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "472822343250",
+    "project_id": "donotdisturb-7875d",
+    "storage_bucket": "donotdisturb-7875d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472822343250:android:fc9ad82c10d50f40dda18b",
+        "android_client_info": {
+          "package_name": "com.example.donotdisturb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472822343250-o7ma0put6bgr8d43fa1c5ptpfr82vk2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRJBshf0f1OHqIoqaBUmGgbrjifONsZHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472822343250-o7ma0put6bgr8d43fa1c5ptpfr82vk2a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
